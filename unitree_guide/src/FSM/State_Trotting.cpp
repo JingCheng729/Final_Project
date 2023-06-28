@@ -109,7 +109,6 @@ void State_Trotting::run(){
             _lowCmd->setStableGain(i);
         }
     }
-
 }
 
 bool State_Trotting::checkStepOrNot(){

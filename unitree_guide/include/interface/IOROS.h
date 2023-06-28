@@ -12,6 +12,8 @@
 #include "unitree_legged_msgs/LowState.h"
 #include "unitree_legged_msgs/MotorCmd.h"
 #include "unitree_legged_msgs/MotorState.h"
+#include <geometry_msgs/WrenchStamped.h>
+
 #include <sensor_msgs/Imu.h>
 #include <string>
 
@@ -25,7 +27,7 @@ private:
 void sendCmd(const LowlevelCmd *cmd);
 void recvState(LowlevelState *state);
 ros::NodeHandle _nm;
-ros::Subscriber _servo_sub[12], _imu_sub;
+ros::Subscriber _servo_sub[12], _footForce_sub[4], _imu_sub;
 ros::Publisher _servo_pub[12];
 unitree_legged_msgs::LowCmd _lowCmd;
 unitree_legged_msgs::LowState _lowState;
@@ -53,6 +55,12 @@ void RRcalfCallback(const unitree_legged_msgs::MotorState& msg);
 void RLhipCallback(const unitree_legged_msgs::MotorState& msg);
 void RLthighCallback(const unitree_legged_msgs::MotorState& msg);
 void RLcalfCallback(const unitree_legged_msgs::MotorState& msg);
+
+void FRfootCallback(const geometry_msgs::WrenchStamped& msg);
+void FLfootCallback(const geometry_msgs::WrenchStamped& msg);
+void RRfootCallback(const geometry_msgs::WrenchStamped& msg);
+void RLfootCallback(const geometry_msgs::WrenchStamped& msg);
+
 };
 
 #endif  // IOROS_H

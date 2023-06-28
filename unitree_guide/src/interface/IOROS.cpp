@@ -73,6 +73,13 @@ void IOROS::recvState(LowlevelState *state){
         state->imu.gyroscope[i] = _lowState.imu.gyroscope[i];
     }
     state->imu.quaternion[3] = _lowState.imu.quaternion[3];
+
+    for(int i(0); i < 4; ++i){
+        state->footForce[i] = _lowState.footForce[i];
+        state->eeForce[i].x = _lowState.eeForce[i].x;
+        state->eeForce[i].y = _lowState.eeForce[i].y;
+        state->eeForce[i].z = _lowState.eeForce[i].z;
+    }
 }
 
 void IOROS::initSend(){
@@ -92,6 +99,10 @@ void IOROS::initSend(){
 
 void IOROS::initRecv(){
     _imu_sub = _nm.subscribe("/trunk_imu", 1, &IOROS::imuCallback, this);
+    _footForce_sub[0] = _nm.subscribe("/visual/FR_foot_contact/the_force", 1, &IOROS::FRfootCallback, this);
+    _footForce_sub[1] = _nm.subscribe("/visual/FL_foot_contact/the_force", 1, &IOROS::FLfootCallback, this);
+    _footForce_sub[2] = _nm.subscribe("/visual/RR_foot_contact/the_force", 1, &IOROS::RRfootCallback, this);
+    _footForce_sub[3] = _nm.subscribe("/visual/RL_foot_contact/the_force", 1, &IOROS::RLfootCallback, this);
     _servo_sub[0] = _nm.subscribe("/" + _robot_name + "_gazebo/FR_hip_controller/state", 1, &IOROS::FRhipCallback, this);
     _servo_sub[1] = _nm.subscribe("/" + _robot_name + "_gazebo/FR_thigh_controller/state", 1, &IOROS::FRthighCallback, this);
     _servo_sub[2] = _nm.subscribe("/" + _robot_name + "_gazebo/FR_calf_controller/state", 1, &IOROS::FRcalfCallback, this);
@@ -216,6 +227,38 @@ void IOROS::RLcalfCallback(const unitree_legged_msgs::MotorState& msg)
     _lowState.motorState[11].q = msg.q;
     _lowState.motorState[11].dq = msg.dq;
     _lowState.motorState[11].tauEst = msg.tauEst;
+}
+
+void IOROS::FRfootCallback(const geometry_msgs::WrenchStamped& msg)
+{
+    _lowState.eeForce[0].x = msg.wrench.force.x;
+    _lowState.eeForce[0].y = msg.wrench.force.y;
+    _lowState.eeForce[0].z = msg.wrench.force.z;
+    _lowState.footForce[0] = msg.wrench.force.z;
+}
+
+void IOROS::FLfootCallback(const geometry_msgs::WrenchStamped& msg)
+{
+    _lowState.eeForce[1].x = msg.wrench.force.x;
+    _lowState.eeForce[1].y = msg.wrench.force.y;
+    _lowState.eeForce[1].z = msg.wrench.force.z;
+    _lowState.footForce[1] = msg.wrench.force.z;
+}
+
+void IOROS::RRfootCallback(const geometry_msgs::WrenchStamped& msg)
+{
+    _lowState.eeForce[2].x = msg.wrench.force.x;
+    _lowState.eeForce[2].y = msg.wrench.force.y;
+    _lowState.eeForce[2].z = msg.wrench.force.z;
+    _lowState.footForce[2] = msg.wrench.force.z;
+}
+
+void IOROS::RLfootCallback(const geometry_msgs::WrenchStamped& msg)
+{
+    _lowState.eeForce[3].x = msg.wrench.force.x;
+    _lowState.eeForce[3].y = msg.wrench.force.y;
+    _lowState.eeForce[3].z = msg.wrench.force.z;
+    _lowState.footForce[3] = msg.wrench.force.z;
 }
 
 #endif  // COMPILE_WITH_ROS

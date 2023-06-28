@@ -26,6 +26,19 @@ struct MotorState
     }
 };
 
+struct EeForce
+{
+    float x;    // w, x, y, z
+    float y;
+    float z;
+
+    EeForce(){
+        x = 0;
+        y = 0;
+        z = 0;
+    }
+};
+
 struct IMU
 {
     float quaternion[4];    // w, x, y, z
@@ -70,8 +83,11 @@ struct LowlevelState
 {
     IMU imu;
     MotorState motorState[12];
+    EeForce eeForce[4];
     UserCommand userCmd;
     UserValue userValue;
+
+    uint16_t footForce[4];
 
     Vec34 getQ(){
         Vec34 qLegs;

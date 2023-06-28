@@ -31,6 +31,8 @@ void State_Pronking::run(){
     for(int j=0; j<12; j++){
         _lowCmd->motorCmd[j].q = (1 - _percent)*_startPos[j] + _percent*_targetPos[j]; 
     }
+    std::cout<< "motorState_1" << _lowState->motorState[1].q << std::endl;
+    std::cout<< "footForce_1" << _lowState->footForce[1] << std::endl;
 }
 
 void State_Pronking::exit(){
