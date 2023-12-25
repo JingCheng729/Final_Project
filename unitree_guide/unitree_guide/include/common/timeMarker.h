@@ -26,7 +26,7 @@ inline void absoluteWait(long long startTime, long long waitTime){
         << "The program has already cost " << getSystemTime() - startTime << "us." << std::endl;
     }
     while(getSystemTime() - startTime < waitTime){
-        usleep(50);
+        usleep(10);
     }
 }
 

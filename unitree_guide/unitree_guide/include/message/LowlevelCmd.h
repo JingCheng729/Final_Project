@@ -55,6 +55,7 @@ struct LowlevelCmd{
             }
             motorCmd[i].tau = saturation(tau(i), torqueLimit);
         }
+                    std::cout<< "motorCmd[11].tau" << motorCmd[11].tau << std::endl;
     }
     void setZeroDq(int legID){
         motorCmd[legID*3+0].dq = 0;
