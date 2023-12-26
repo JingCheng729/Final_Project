@@ -47,8 +47,8 @@ void State_Pronking::run(){
             _currenttao[j] = _lowState->motorState[j].tauEst;
         }        
 
-        _jointQd[0] = 0.2*sin(M_PI*0.5*_timePass);
-        _jointQd[1] = 0.2*cos(M_PI*0.5*_timePass);
+        _jointQd[0] = 0.8 + 0.2*sin(M_PI*0.5*_timePass);
+        _jointQd[1] = -1.65 + 0.2*cos(M_PI*0.5*_timePass);
         _jointQd_d[0] = 0.2*M_PI*0.5*cos(M_PI*0.5*_timePass);
         _jointQd_d[1] = -0.2*M_PI*0.5*sin(M_PI*0.5*_timePass);
         _jointQd_dd[0] = -0.2*M_PI*0.5*M_PI*0.5*sin(M_PI*0.5*_timePass);
@@ -82,7 +82,8 @@ void State_Pronking::run(){
         for(int p_i=0; p_i<5; p_i++){
             _P[p_i] += _pHatDot[p_i] * dt;
         }
-
+        _yp[0] = 0;
+        _yp[1] = 0;
         for(int p_i = 0; p_i < 2; p_i++){
             for (int p_j = 0; p_j < 5; p_j++){
                 _yp[p_i] += _legY[p_i][p_j] * _P[p_j];
@@ -97,29 +98,29 @@ void State_Pronking::run(){
 
         for(int j=0; j<2; j++){
 
-            _tao[10+j] =  20* _error[j] + 4 * _derror[j];//_K * _r[j] + _error[j];// + _yp[j];
+            _tao[10+j] =  _K * _r[j] + _error[j] + _yp[j];//20* _error[j] + 4 * _derror[j];
 
         }
-            // for(int j=0; j<10; j++){
-            //     _lowCmd->motorCmd[j].q = _targetPos[j]; 
-            // }
+            for(int j=0; j<10; j++){
+                _lowCmd->motorCmd[j].q = _targetPos[j]; 
+            }
 
-            for(int j=0; j<12; j++){
+            for(int j=10; j<12; j++){
                      _lowCmd->motorCmd[j].mode = 0x0A;
                    _lowCmd->motorCmd[j].q = (2.146E+9f);
                    _lowCmd->motorCmd[j].dq = (16000.0f);
                    _lowCmd->motorCmd[j].Kp = 0;
                    _lowCmd->motorCmd[j].Kd = 0;                
-                //    _lowCmd->motorCmd[j].tau = _tao[j-10];
-                //    _lowCmd->motorCmd[j].q = _targetPos[j] + _jointQd[j-10]; 
+                   _lowCmd->motorCmd[j].tau = _tao[j];
+                //    _lowCmd->motorCmd[j].q = _jointQd[j-10]; 
             }  
 
-            Eigen::Matrix<double, 12, 1> taoMatrix;
-            for(int j=0; j<12; j++){
-                taoMatrix(j) = _tao[j]; //
-            }
+            // Eigen::Matrix<double, 12, 1> taoMatrix;
+            // for(int j=0; j<12; j++){
+            //     taoMatrix(j) = _tao[j]; //
+            // }
 
-            _lowCmd->setTau(taoMatrix);
+            // _lowCmd->setTau(taoMatrix);
 
         // Compute the transpose of the matrix
         for(int p_i = 0; p_i < 2; p_i++){
@@ -130,11 +131,11 @@ void State_Pronking::run(){
 
         for(int p_i = 0; p_i < 5; p_i++){
             for (int p_j = 0; p_j < 2; p_j++){
-                _pHatDot[p_i] += _gamma * _legYT[p_i][p_j] * _r[p_j];
+                _pHatDot[p_i] = _gamma * _legYT[p_i][p_j] * _r[p_j];
             }
         }   
 
-            std::cout<< "_tao[11]" << taoMatrix(11) << std::endl;
+            std::cout<< "_P[p_i]" << _P[4] << std::endl;
             std::cout<< "_error[1]" << _error[1] << std::endl;
             std::cout<< "_r[1]" << _r[1] << std::endl;
             std::cout<< "_yp[1]" << _yp[1] << std::endl;

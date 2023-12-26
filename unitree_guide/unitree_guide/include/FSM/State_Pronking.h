@@ -16,8 +16,8 @@ public:
     FSMStateName checkChange();
 
 private:
-    float _targetPos[12] = {0.0, 0.97, -2.1, 0.0, 0.97, -2.1, 
-                            0.0, 0.97, -2.1, 0.0, 0.97, -2.1};
+    float _targetPos[12] ={0, 0.8, -1.65, 0, 0.8, -1.65, 
+                                 0, 0.8, -1.65, 0, 0.8, -1.65};;
     float _startPos[12], _currentPos[12], _currentVel[12], _currentAcc[12],  _currenttao[12];
     float _stand = 300;   //steps  300*0.002 = 0.6s
     float _timePass = 0;     //time pass in run after stand
@@ -34,9 +34,9 @@ private:
     int motiontime = 0;
     float dt = 0.001;     // 0.001~0.01
 
-    float _gamma = 0.1;
-    float _alpha = 2;
-    float _K = 0.5;
+    float _gamma = 1;
+    float _alpha = 10;
+    float _K = 1.5;
 };
 
 #endif  // Pronking_H
