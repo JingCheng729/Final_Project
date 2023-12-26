@@ -12,6 +12,8 @@
         "/home/cj/catkin_ws/src/unitree_guide/unitree_guide/include/**",
         "/home/cj/catkin_ws/src/unitree_ros/unitree_legged_control/include/**",
         "/home/cj/catkin_ws/src/unitree_guide/unitree_actuator_sdk/unitree_motor_ctrl/include/**",
+        "/usr/include/python2.7/**",
+        "/usr/local/lib/python3.7/dist-packages/numpy/core/include",
         "/usr/include/**"
       ],
       "name": "ROS",
