@@ -5,6 +5,8 @@
 #define PRONKING_H
 
 #include "FSM/FSMState.h"
+#include <eigen3/Eigen/Dense>
+#include <eigen3/Eigen/Core>
 
 class State_Pronking : public FSMState{
 public:
@@ -53,20 +55,20 @@ private:
     float _Gamma1 = 5;
     float _Gamma2 = 10;
 
-    Eigen::VectorXd _xd;
-    // Eigen::Matrix<float, 5, 1>_vXd;
-    Eigen::Matrix<float, 7, 5> _vHat;
-    Eigen::Matrix<float, 6, 2> _wHat;
+    // Eigen::VectorXd _xd;
+    // // Eigen::Matrix<float, 5, 1>_vXd;
+    // Eigen::Matrix<float, 7, 5> _vHat;
+    // Eigen::Matrix<float, 6, 2> _wHat;
 
-    Eigen::Matrix<float, 2, 1> _fHat;
+    // Eigen::Matrix<float, 2, 1> _fHat;
 
-    // Eigen::Matrix<float, 5, 1> _sigma;
-    // Eigen::Matrix<float, 6, 1> _sigmaVec;
-    // Eigen::Matrix<float, 6, 5> _sigmaPrimeVec = Eigen::Matrix<float, 6, 5>::Ones();
+    // // Eigen::Matrix<float, 5, 1> _sigma;
+    // // Eigen::Matrix<float, 6, 1> _sigmaVec;
+    // // Eigen::Matrix<float, 6, 5> _sigmaPrimeVec = Eigen::Matrix<float, 6, 5>::Ones();
         
-    Eigen::MatrixXd identityMatrix5 = Eigen::MatrixXd::Identity(5, 5); // 5x5 identity matrix
-    Eigen::Matrix<float, 6, 2> _wHatDot  = Eigen::Matrix<float, 6, 2>::Zero();
-    Eigen::Matrix<float, 7, 5> _vHatDot = Eigen::Matrix<float, 6, 2>::Zero();
+    // Eigen::MatrixXd identityMatrix5 = Eigen::MatrixXd::Identity(5, 5); // 5x5 identity matrix
+    // Eigen::Matrix<float, 6, 2> _wHatDot  = Eigen::Matrix<float, 6, 2>::Zero();
+    // Eigen::Matrix<float, 7, 5> _vHatDot = Eigen::Matrix<float, 6, 2>::Zero();
 
 
 };
