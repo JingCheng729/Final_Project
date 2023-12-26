@@ -40,7 +40,7 @@ private:
     float dt = 0.002;     // 0.001~0.01
 
     float _gamma = 1;
-    // float _alpha = 20; //ada
+    float _alpha = 20; //ada
     float _K = 3;
 
     std::vector<std::vector<double>> _desQ, _actQ, _fEst, _pEst, _reTao;
@@ -49,7 +49,7 @@ private:
     float _K_1 = 1;
     float _K_s = 1;
     float _K_n = 1;
-    float _alpha = 1;
+    // float _alpha = 1;
     float _one = 1.0;
 
     float _Gamma1 = 5;
