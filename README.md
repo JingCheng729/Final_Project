@@ -41,4 +41,4 @@ After starting the controller,  the robot will lie on the ground of the simulato
 . (If there is no response, you need to click on the terminal opened for starting the controller and then repeat the previous operation)
 
 # Note
-The '6' key on the keyboard has been set for the final project. The vserion of commint 2702bc13c6740fa8df525209b467dd14215daee3(recover adaptive and plot) is the adaptive control. The vserion of commint 3cd3be67e9e78c7ff798d1b3112ff0be0c881c4c(recover adaptive and plot) is the neural network control. 
+The '6' key on the keyboard has been set for the final project. The vserion of commint 2702bc13c6740fa8df525209b467dd14215daee3(recover adaptive and plot) is the adaptive control. The vserion of commint 3cd3be67e9e78c7ff798d1b3112ff0be0c881c4c(nerual_network control) is the neural network control. 
