@@ -69,7 +69,79 @@ void State_Pronking::run(){
             _error[j] = _jointQd[j] - _jointQ[j];
             _derror[j] = _jointQd_d[j] - _jointQ_d[j];
             _r[j] = _derror[j] + _alpha * _error[j];
-        }          
+        } 
+
+        // Calculate the total size of the resulting 1D array
+        // size_t size1 = sizeof(_jointQd) / sizeof(_jointQd[0]);
+        // size_t size2 = sizeof(_jointQd_d) / sizeof(_jointQd_d[0]);
+        // size_t size3 = sizeof(_jointQ_dd) / sizeof(_jointQ_dd[0]);
+        // size_t totalSize = 1+ size1 + size2 + size3;
+
+
+        // Use loops to concatenate the arrays
+        // size_t index = 0;
+        // for (size_t i = 0; i < 1; ++i) {
+        //     _xd[index++] = _one;
+        // }            
+        // for (size_t i = 0; i < size1; ++i) {
+        //     _xd[index++] = _jointQd[i];
+        // }
+        // for (size_t i = 0; i < size2; ++i) {
+        //     _xd[index++] = _jointQd_d[i];
+        // }
+        // for (size_t i = 0; i < size3; ++i) {
+        //     _xd[index++] = _jointQ_dd[i];
+        // }
+
+        // Compute the transpose of the matrix
+        // for(int p_i = 0; p_i < 7; p_i++){
+        //     for (int p_j = 0; p_j < 5; p_j++){
+        //         _vHatT[p_j][p_i] = _vHat[p_i][p_j];
+        //     }
+        // }                     
+
+        // // Compute the transpose of the matrix
+        // for(int p_i = 0; p_i < 6; p_i++){
+        //     for (int p_j = 0; p_j < 2; p_j++){
+        //         _wHatT[p_j][p_i] = _wHat[p_i][p_j];
+        //     }
+        // }
+
+        _xd << 1, _jointQd[0], _jointQd[1], _jointQd_d[0], _jointQd_d[1], _jointQd_dd[0], _jointQd_dd[1];
+        // Compute the vxd
+        // for(int p_i = 0; p_i < 5; p_i++){
+        //     for (int p_j = 0; p_j < 7; p_j++){
+        //         _vXd[p_i] += _vHatT[p_i][p_j] * _xd[p_j];
+        //     }
+        // }    
+        _vXd = _vHat.transpose() * _xd;  
+
+        // Compute the activation function
+        // float sigmaVec[6] = {1.0};
+        // Calculate sigma = exp(-(vq)^2/2) (5x1)
+        Eigen::Matrix<float, 5, 1> sigma = (-0.5 * _vXd.array().square()).exp();
+
+        // Create sigma_vec by adding 1 to the beginning and stacking sigma (6x1)
+
+        _sigmaVec << 1.0, sigma;
+
+        // Calculate the diagonal matrix -exp(-(vxd^2)/2) * vxd' (5x5)
+
+        // Calculate sigma as a diagonal matrix
+        Eigen::Matrix<float, 5, 5> diag_matrix;
+
+        // float vxd[5] = {_vXd[0], _vXd[1], _vXd[2], _vXd[3], _vXd[4]};
+
+        // for (int i = 0; i < 5; i++) {
+        //     diag_matrix(i, i) = sigma(i);
+        // }
+
+        diag_matrix = -sigma * _vXd.transpose();
+        // Multiply the diagonal matrix by _vXd
+        Eigen::Matrix<float, 5, 5> result = diag_matrix * identityMatrix5;
+
+        // Create sigma_prime by stacking [1 1 1 1 1] as the first row and diag_matrix as the second row (6x5)
+        _sigmaPrimeVec << Eigen::Matrix<float, 1, 5>::Ones(5), result; 
 
         _legY[0][0] = _jointQd_dd[0];
         _legY[0][1] = _jointQd_dd[0] + _jointQd_dd[1];
@@ -82,9 +154,12 @@ void State_Pronking::run(){
         _legY[1][3] = 0.0;
         _legY[1][4] = cos(_jointQ[0] + _jointQ[1]);
 
-        for(int p_i=0; p_i<5; p_i++){
-            _P[p_i] += _pHatDot[p_i] * dt;
-        }
+        //update
+        _wHat += _wHatDot * dt;
+        _vHat += _vHatDot * dt;
+        
+
+        
         _yp[0] = 0;
         _yp[1] = 0;
         for(int p_i = 0; p_i < 2; p_i++){
@@ -94,14 +169,14 @@ void State_Pronking::run(){
         }  
 
         for(int j=0; j<10; j++){
-
             _tao[j] = 0.0;
-
         }
+
+        _fHat = _wHat.transpose() * _sigmaVec;
 
         for(int j=0; j<2; j++){
 
-            _tao[10+j] =  _K * _r[j] + _error[j] + _yp[j];//20* _error[j] + 4 * _derror[j];
+            _tao[10+j] =  _K_1 * _r[j] + _K_n * _r[j] + _error[j] + _fHat[j];
 
         }
             for(int j=0; j<10; j++){
@@ -119,19 +194,15 @@ void State_Pronking::run(){
             }
 
 
-_actQ1.push_back(_jointQ[0]);
-_actQ2.push_back(_jointQ[1]);
-_desQ1.push_back(_jointQd[0]);
-_desQ2.push_back(_jointQd[1]);
-_fEst1.push_back(_yp[0]);
-_fEst2.push_back(_yp[1]);
-_reTao1.push_back(_tao[10]);
-_reTao2.push_back(_tao[11]);
-_pEst1.push_back(_P[0]);
-_pEst2.push_back(_P[1]);
-_pEst3.push_back(_P[2]);
-_pEst4.push_back(_P[3]);
-_pEst5.push_back(_P[4]);
+                _actQ1.push_back(_jointQ[0]);
+                _actQ2.push_back(_jointQ[1]);
+                _desQ1.push_back(_jointQd[0]);
+                _desQ2.push_back(_jointQd[1]);
+                _fEst1.push_back(_fHat[0]);
+                _fEst2.push_back(_fHat[1]);
+                _reTao1.push_back(_tao[10]);
+                _reTao2.push_back(_tao[11]);
+
 
         // for (int p_i = 0; p_i < 5; p_i++){
         //     _pEst[p_i].push_back(_P[p_i]);
@@ -157,6 +228,14 @@ _pEst5.push_back(_P[4]);
             }
         }   
 
+        ///update law
+        Eigen::Matrix<float, 2, 1> rV;
+        rV << _r[0], 
+              _r[1];
+        _wHatDot = _Gamma1 * _sigmaVec * rV.transpose();
+        _vHatDot = _Gamma2 * _xd * rV.transpose() *_wHat.transpose() * _sigmaPrimeVec;
+       
+
             std::cout<< "_P[p_i]" << _P[4] << std::endl;
             std::cout<< "_error[1]" << _error[1] << std::endl;
             std::cout<< "_r[1]" << _r[1] << std::endl;
@@ -181,16 +260,12 @@ void State_Pronking::exit(){
         _fEst.push_back(_fEst2);
         _reTao.push_back(_reTao1);
         _reTao.push_back(_reTao2);
-        _pEst.push_back(_pEst1);
-        _pEst.push_back(_pEst2);
-        _pEst.push_back(_pEst3);
-        _pEst.push_back(_pEst4);
-        _pEst.push_back(_pEst5);
+
 
     plotData(_desQ, _actQ);
     plotData(_fEst, _fEst);
     plotData(_reTao, _reTao);
-    plotData(_pEst, _pEst);
+
 }
 
 FSMStateName State_Pronking::checkChange(){

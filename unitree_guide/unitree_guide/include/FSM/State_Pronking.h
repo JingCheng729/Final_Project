@@ -43,32 +43,32 @@ private:
     float _alpha = 20; //ada
     float _K = 3;
 
-    std::vector<std::vector<double>> _desQ, _actQ, _fEst, _pEst, _reTao;
-    std::vector<double> _desQ1, _desQ2,  _actQ1, _actQ2, _fEst1, _fEst2,_reTao1, _reTao2, _pEst1, _pEst2, _pEst3, _pEst4, _pEst5;
+    std::vector<std::vector<double>> _desQ, _actQ, _fEst, _pEst, _reTao, _w1Est;
+    std::vector<double> _desQ1, _desQ2,  _actQ1, _actQ2, _fEst1, _fEst2,_reTao1, _reTao2, _pEst1, _pEst2, _pEst3, _pEst4, _pEst5,  _w1Est1, _w1Est2, _w1Est3, _w1Est4, _w1Est5;
 
-    float _K_1 = 1;
-    float _K_s = 1;
-    float _K_n = 1;
-    // float _alpha = 1;
+    float _K_1 = 3;
+    float _K_s = 3;
+    float _K_n = 3;
+
     float _one = 1.0;
 
-    float _Gamma1 = 5;
-    float _Gamma2 = 10;
+    float _Gamma1 = 20;
+    float _Gamma2 = 50;
 
-    // Eigen::VectorXd _xd;
-    // // Eigen::Matrix<float, 5, 1>_vXd;
-    // Eigen::Matrix<float, 7, 5> _vHat;
-    // Eigen::Matrix<float, 6, 2> _wHat;
+    Eigen::Matrix<float, 7, 1> _xd;
+    Eigen::Matrix<float, 5, 1>_vXd;
+    Eigen::Matrix<float, 7, 5> _vHat;
+    Eigen::Matrix<float, 6, 2> _wHat;
 
-    // Eigen::Matrix<float, 2, 1> _fHat;
+    Eigen::Matrix<float, 2, 1> _fHat;
 
-    // // Eigen::Matrix<float, 5, 1> _sigma;
-    // // Eigen::Matrix<float, 6, 1> _sigmaVec;
-    // // Eigen::Matrix<float, 6, 5> _sigmaPrimeVec = Eigen::Matrix<float, 6, 5>::Ones();
+    // Eigen::Matrix<float, 5, 1> _sigma;
+    Eigen::Matrix<float, 6, 1> _sigmaVec;
+    Eigen::Matrix<float, 6, 5> _sigmaPrimeVec;
         
-    // Eigen::MatrixXd identityMatrix5 = Eigen::MatrixXd::Identity(5, 5); // 5x5 identity matrix
-    // Eigen::Matrix<float, 6, 2> _wHatDot  = Eigen::Matrix<float, 6, 2>::Zero();
-    // Eigen::Matrix<float, 7, 5> _vHatDot = Eigen::Matrix<float, 6, 2>::Zero();
+    Eigen::Matrix<float, 5, 5> identityMatrix5 = Eigen::Matrix<float, 5, 5>::Identity(5, 5); // 5x5 identity matrix
+    Eigen::Matrix<float, 6, 2> _wHatDot  = Eigen::Matrix<float, 6, 2>::Zero();
+    Eigen::Matrix<float, 7, 5> _vHatDot = Eigen::Matrix<float, 7, 5>::Zero();
 
 
 };
